@@ -1,21 +1,19 @@
 require('dotenv').config('.env');
-const express = require('express')
-const bodyParser = require('body-parser');
+const body_parser = require('body-parser');
 const kafka = require('./kafkaProducer');
 
+const express = require('express')
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(body_parser.json());
+app.use(body_parser.urlencoded({ extended: true }));
 
 const port = process.env.PORT;
-const kafkaProducer = new kafka.KafkaProducer(process.env.KAFKA_HOST, process.env.KAFKA_PORT);
+const kafka_topic = process.env.KAFKA_TOPIC
+const kafka_producer = new kafka.KafkaProducer(process.env.KAFKA_HOST, process.env.KAFKA_PORT);
 
 app.post('/consumption', (request, response) => {
-  console.log(request.body);
-  kafkaProducer.Send("consumptions", request.body);
+  kafka_producer.send(kafka_topic, request.body);
   response.send('$_$');
 });
 
-app.listen(port, function () {
-  console.log('App iniciada en puerto ' + port);
-})
+app.listen(port, () => console.log('Listening port ' + port));

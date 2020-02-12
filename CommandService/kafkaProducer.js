@@ -2,12 +2,12 @@ const kafka = require('kafka-node');
 
 class KafkaProducer {
   constructor(host, port) {
-    console.log(`Conectando con kafka en ${host}:${port}`);
-    this.client = new kafka.KafkaClient({ kafkaHost: `${host}:${port}` });
+    console.log(`Connecting to kafka ${host}:${port}`);
+    let kafka_options = { kafkaHost: `${host}:${port}` };
+    this.client = new kafka.KafkaClient(kafka_options);
   }
 
-  Send(kafka_topic, msg) {
-    this.client = new kafka.KafkaClient();
+  send(kafka_topic, msg) {
     let producer = new kafka.Producer(this.client);
     let payloads = [
       {
@@ -16,15 +16,13 @@ class KafkaProducer {
       }
     ];
 
-    producer.on('ready', async function() {
-      let push_status = producer.send(payloads, (err, data) => {
-        if (err) {
-          console.error(err);
-          console.error('[kafkaProducer -> '+ kafka_topic +']: broker update failed');
-        } else {
-          console.log('[kafkaProducer -> '+ kafka_topic +']: broker update success');
-        }
-      });
+    producer.send(payloads, (err, data) => {
+      if (err) {
+        console.error(err);
+        console.error('[kafkaProducer -> '+ kafka_topic +']: broker update failed');
+      } else {
+        console.log('[kafkaProducer -> '+ kafka_topic +']: broker update success');
+      }
     });
   
     producer.on('error', function(err) {
