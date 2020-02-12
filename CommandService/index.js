@@ -11,9 +11,9 @@ const port = process.env.PORT;
 const kafka_topic = process.env.KAFKA_TOPIC
 const kafka_producer = new kafka.KafkaProducer(process.env.KAFKA_HOST, process.env.KAFKA_PORT);
 
+app.listen(port, () => console.log('Listening port ' + port));
+
 app.post('/consumption', (request, response) => {
   kafka_producer.send(kafka_topic, request.body);
   response.send('$_$');
 });
-
-app.listen(port, () => console.log('Listening port ' + port));
